@@ -6,3 +6,17 @@ nav{
 .list{
     background-color: darkseagreen;
 }
+h1{
+    font-family: 'Courier New', Courier, monospace;
+}
+h3{
+    font-style: oblique;
+}
+p{
+    font-size: 17.879456666666666666666666666666666666666599278667854683784949765497696777347566767677769798630679767667676767676767676767px;
+    text-transform: capitalize;
+}
+.Arrivals{
+    font-weight: 999;
+    text-decoration:blanchedalmond underline wavy;
+}
