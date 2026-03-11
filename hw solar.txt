@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Our Solar System</title>
+
+    <style>
+        .mainHeading {
+            color: turquoise;
+            font-size: 40px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <p id="description"></p>
+
+    <script>
+        // Create h1 element
+        let heading = document.createElement("h1");
+
+        // Add class name
+        heading.className = "mainHeading";
+
+        // Add heading text
+        heading.innerHTML = "Our Solar System";
+
+        // Add heading at the beginning of body
+        document.body.prepend(heading);
+
+        // Access p tag and add description
+        let para = document.getElementById("description");
+
+        para.innerHTML = "The solar system consists of the Sun and everything that orbits, or travels around, the Sun. This includes the eight planets and their moons, dwarf planets, and countless asteroids, comets, and other small objects. However, even with all these things, most of the solar system is empty space.";
+    </script>
+
+</body>
+</html>
