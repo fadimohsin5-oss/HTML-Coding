@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fahmoh Game Hub V3</title>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <style>
+    :root{
+      --bg:#101827;
+      --bg2:#1a2440;
+      --panel:#182235;
+      --panel2:#23314d;
+      --line:rgba(255,255,255,.12);
+      --txt:#f8fafc;
+      --muted:#b6c2da;
+      --cyan:#22d3ee;
+      --violet:#8b5cf6;
+      --pink:#ec4899;
+      --green:#22c55e;
+      --yellow:#f59e0b;
+      --red:#ef4444;
+      --shadow:0 20px 60px rgba(0,0,0,.35);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      color:var(--txt);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(34,211,238,.18), transparent 30%),
+        radial-gradient(circle at 100% 0%, rgba(139,92,246,.18), transparent 34%),
+        linear-gradient(180deg, var(--bg), var(--bg2));
+      min-height:100vh;
+    }
+    .wrap{max-width:1250px;margin:0 auto;padding:18px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+    .brand{display:flex;align-items:center;gap:14px}
+    .logo{width:62px;height:62px;border-radius:18px;background:linear-gradient(135deg,var(--cyan),var(--violet));display:grid;place-items:center;font-weight:900;font-size:24px;box-shadow:var(--shadow)}
+    h1,h2,h3,p{margin:0}
+    .sub{color:var(--muted);margin-top:6px;font-size:14px}
+    .pillrow{display:flex;gap:10px;flex-wrap:wrap}
+    .pill{padding:9px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);font-size:13px}
+    .panel{background:rgba(24,34,53,.88);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+    .pad{padding:18px}
+    .menu-grid{display:grid;grid-template-columns:340px 1fr;gap:16px}
+    @media (max-width:980px){.menu-grid{grid-template-columns:1fr}}
+    .side-stack,.main-stack{display:grid;gap:16px}
+    .section-title{font-size:20px;font-weight:900;margin-bottom:12px}
+    .muted{color:var(--muted)}
+    .tiny{font-size:12px}
+    .row{display:flex;gap:10px}.row.wrap{flex-wrap:wrap}.row.between{justify-content:space-between;align-items:center}
+    input,select,button{font:inherit;border-radius:16px;transition:.15s ease;outline:none}
+    input,select{width:100%;padding:13px 14px;border:1px solid var(--line);background:#0f172a;color:white}
+    button{cursor:pointer;border:none;padding:13px 16px;color:white;font-weight:800}
+    button:hover{transform:translateY(-1px);filter:brightness(1.07)}
+    button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    .btn{background:linear-gradient(135deg,#334155,#475569)}
+    .btn-cyan{background:linear-gradient(135deg,var(--cyan),#0891b2)}
+    .btn-violet{background:linear-gradient(135deg,var(--violet),#6d28d9)}
+    .btn-pink{background:linear-gradient(135deg,var(--pink),#be185d)}
+    .btn-green{background:linear-gradient(135deg,var(--green),#15803d)}
+    .btn-yellow{background:linear-gradient(135deg,var(--yellow),#b45309)}
+    .btn-red{background:linear-gradient(135deg,var(--red),#b91c1c)}
+    .card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    @media (max-width:860px){.card-grid{grid-template-columns:1fr}}
+    .game-card{position:relative;padding:18px;border-radius:24px;border:1px solid var(--line);background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));overflow:hidden;text-align:left}
+    .game-card::before{content:'';position:absolute;inset:auto -30px -30px auto;width:110px;height:110px;border-radius:999px;background:rgba(255,255,255,.08)}
+    .game-card .emoji{font-size:42px;margin-bottom:8px}
+    .game-card .title{font-size:22px;font-weight:900;margin-bottom:6px}
+    .game-card .desc{font-size:14px;color:var(--muted);line-height:1.45;margin-bottom:14px}
+    .meta{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.07);font-size:12px;color:var(--muted)}
+    .badge{display:inline-flex;gap:8px;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--muted);font-size:13px}
+    .dot{width:9px;height:9px;border-radius:999px;background:var(--green)}
+    .code{font-family:Consolas,monospace;font-weight:900;font-size:28px;letter-spacing:.16em;text-align:center;padding:14px;border-radius:18px;border:1px dashed rgba(34,211,238,.35);background:rgba(255,255,255,.05)}
+    .list{display:grid;gap:10px;max-height:360px;overflow:auto}
+    .item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+    .left{display:flex;align-items:center;gap:10px;min-width:0}.rank,.avatar{flex:0 0 auto;display:grid;place-items:center}.rank{width:28px;height:28px;border-radius:999px;background:rgba(255,255,255,.08);font-weight:900}.avatar{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),var(--violet));font-weight:900}
+    .name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta-line{font-size:12px;color:var(--muted)}
+    .score{font-weight:900;font-size:19px;color:var(--cyan)}
+    .hidden{display:none !important}
+    .screen{display:none}.screen.active{display:block}
+    .game-layout{display:grid;grid-template-columns:1fr 320px;gap:16px}
+    @media (max-width:980px){.game-layout{grid-template-columns:1fr}}
+    .hero-box{padding:24px;border-radius:24px;text-align:center;background:radial-gradient(circle at top, rgba(34,211,238,.14), transparent 60%), rgba(255,255,255,.04);border:1px solid rgba(34,211,238,.18)}
+    .big{font-size:clamp(26px,4vw,54px);font-weight:900;line-height:1.05;letter-spacing:-.03em;margin:10px 0}
+    .progress{height:12px;border-radius:999px;overflow:hidden;background:rgba(255,255,255,.07);border:1px solid var(--line)}
+    .progress>div{height:100%;width:0%;background:linear-gradient(90deg,var(--cyan),var(--violet));transition:width .2s ease}
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    @media (max-width:760px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
+    .stat{padding:14px;border-radius:18px;background:rgba(255,255,255,.05);border:1px solid var(--line)}
+    .stat .k{font-size:12px;color:var(--muted)}.stat .v{font-size:28px;font-weight:900;margin-top:6px}
+    .center{text-align:center}
+    canvas{width:100%;height:300px;border-radius:20px;display:block;background:linear-gradient(180deg,#09111d,#0f172a)}
+    .toast-root{position:fixed;right:16px;bottom:16px;display:grid;gap:10px;z-index:40}
+    .toast{max-width:320px;padding:12px 14px;border-radius:18px;background:#0f172a;border:1px solid var(--line);box-shadow:var(--shadow)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">FG</div>
+        <div>
+          <h1>Fahmoh Game Hub</h1>
+          <div class="sub">A Blooket x Roblox style game hub with all the same names and shared multiplayer rooms.</div>
+        </div>
+      </div>
+      <div class="pillrow">
+        <div class="pill">Laptop + iPad friendly</div>
+        <div class="pill">WebRTC multiplayer</div>
+        <div class="pill">One room for all games</div>
+      </div>
+    </div>
+
+    <div id="hubScreen" class="screen active">
+      <div class="menu-grid">
+        <div class="side-stack">
+          <div class="panel pad">
+            <div class="row between">
+              <h2 class="section-title">Room Setup</h2>
+              <span class="badge"><span class="dot"></span><span id="connText">Ready</span></span>
+            </div>
+            <div class="tiny muted">Your name</div>
+            <input id="playerName" maxlength="18" placeholder="Type your nickname" />
+            <div class="tiny muted" style="margin-top:10px">Room code</div>
+            <input id="roomCodeInput" maxlength="10" placeholder="Enter host code" />
+            <div class="row" style="margin-top:12px">
+              <button id="createRoomBtn" class="btn btn-cyan" style="flex:1">Create Room</button>
+              <button id="joinRoomBtn" class="btn btn-violet" style="flex:1">Join Room</button>
+            </div>
+            <div class="tiny muted" style="margin-top:14px">Current room</div>
+            <div id="roomDisplay" class="code">------</div>
+            <div class="row wrap" style="margin-top:12px">
+              <button id="copyBtn" class="btn">Copy</button>
+              <button id="leaveBtn" class="btn btn-red hidden">Leave</button>
+            </div>
+          </div>
+
+          <div class="panel pad">
+            <h2 class="section-title">Players</h2>
+            <div id="playersList" class="list"><div class="muted">Nobody here yet.</div></div>
+          </div>
+        </div>
+
+        <div class="main-stack">
+          <div class="panel pad">
+            <div class="row between">
+              <h2 class="section-title">Choose A Game</h2>
+              <div class="badge">Same room, same players</div>
+            </div>
+            <div class="card-grid" id="gameCards"></div>
+          </div>
+
+          <div class="panel pad">
+            <div class="row between">
+              <h2 class="section-title">Activity Log</h2>
+              <div class="badge">Live</div>
+            </div>
+            <div id="logList" class="list"><div class="muted">No activity yet.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="gameScreen" class="screen">
+      <div class="row between" style="margin-bottom:16px;flex-wrap:wrap">
+        <div>
+          <h2 id="currentGameTitle">Game</h2>
+          <div class="sub" id="currentGameSub">Multiplayer game room</div>
+        </div>
+        <div class="row wrap">
+          <button id="backHubBtn" class="btn">Back To Hub</button>
+          <button id="resetGameBtn" class="btn btn-yellow hidden">Reset Game</button>
+        </div>
+      </div>
+
+      <div class="game-layout">
+        <div class="main-stack">
+          <div class="panel pad">
+            <div class="stat-grid">
+              <div class="stat"><div class="k">Game</div><div class="v" id="statGame">-</div></div>
+              <div class="stat"><div class="k">Round / Status</div><div class="v" id="statRound">-</div></div>
+              <div class="stat"><div class="k">Timer</div><div class="v" id="statTimer">--</div></div>
+              <div class="stat"><div class="k">Players</div><div class="v" id="statPlayers">0</div></div>
+            </div>
+          </div>
+
+          <div class="panel pad">
+            <div id="gameHero" class="hero-box"></div>
+            <div id="gameControls" class="main-stack" style="margin-top:14px"></div>
+          </div>
+
+          <div class="panel pad">
+            <div class="row between">
+              <h2 class="section-title">Results / Feed</h2>
+              <div class="badge" id="sourceBadge">Source: local</div>
+            </div>
+            <div id="resultsList" class="list"><div class="muted">Nothing yet.</div></div>
+          </div>
+        </div>
+
+        <div class="main-stack">
+          <div class="panel pad">
+            <h2 class="section-title">Leaderboard</h2>
+            <div id="leaderboardList" class="list"><div class="muted">No scores yet.</div></div>
+          </div>
+          <div class="panel pad">
+            <h2 class="section-title">3D View</h2>
+            <canvas id="sceneCanvas" width="640" height="300"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastRoot" class="toast-root"></div>
+
+  <script>
+    const GAMES = [
+      { id:'spelling', name:'Fahmoh Spelling Arena', emoji:'🧠', desc:'Spell words against everyone in the room with timers, points and streaks.', tags:['multiplayer','quiz','voice'] },
+      { id:'mcdonalds', name:"Pranay's McDonalds Sim", emoji:'🍔', desc:'Work together to cook burgers, fries and drinks before the queue gets huge.', tags:['multiplayer','co-op','sim'] },
+      { id:'axolotl', name:"Ali's Axolotl Sim", emoji:'🦎', desc:'Keep the shared axolotl happy by feeding, cleaning and playing before stats drop.', tags:['multiplayer','pet sim','3D'] },
+      { id:'rizz', name:"Aaryan's Rizz Sim", emoji:'😎', desc:'Pick the best line, gain charisma, chain combo streaks and beat friends on charm score.', tags:['multiplayer','funny','choices'] },
+      { id:'sigma', name:"Yahya's Sigma Sim", emoji:'🗿', desc:'Train discipline, focus and grind faster than everyone else to hit sigma rank first.', tags:['multiplayer','race','sim'] },
+      { id:'military', name:"Haim's Military Kombat", emoji:'⚔️', desc:'Fight a shared enemy in rounds with attack, heavy and defend plays.', tags:['multiplayer','battle','3D'] },
+      { id:'aura', name:'Aura Simulator', emoji:'✨', desc:'Meditate, flex, absorb orbs and level aura faster than everyone else.', tags:['multiplayer','sim','3D'] }
+    ];
+
+    const WORDS = {
+      easy:['apple','banana','animal','button','doctor','friend','garden','kitten','planet','rabbit','school','simple','window'],
+      medium:['adventure','beautiful','calendar','friendly','important','library','medicine','necessary','position','sentence','weather'],
+      hard:['accommodate','conscience','environment','embarrass','knowledge','parliament','pronunciation','recommend','temperature','vacuum']
+    };
+    const FOODS = ['Burger','Fries','Drink','Nuggets'];
+    const RIZZ_LINES = [
+      { text:'Are you Wi-Fi? Because I am feeling a strong connection.', score:30 },
+      { text:'You just boosted my charisma by ten.', score:20 },
+      { text:'That line was low-key fire.', score:15 },
+      { text:'Hello.', score:5 }
+    ];
+
+    const els = {
+      hubScreen: document.getElementById('hubScreen'),
+      gameScreen: document.getElementById('gameScreen'),
+      playerName: document.getElementById('playerName'),
+      roomCodeInput: document.getElementById('roomCodeInput'),
+      createRoomBtn: document.getElementById('createRoomBtn'),
+      joinRoomBtn: document.getElementById('joinRoomBtn'),
+      copyBtn: document.getElementById('copyBtn'),
+      leaveBtn: document.getElementById('leaveBtn'),
+      roomDisplay: document.getElementById('roomDisplay'),
+      playersList: document.getElementById('playersList'),
+      gameCards: document.getElementById('gameCards'),
+      logList: document.getElementById('logList'),
+      currentGameTitle: document.getElementById('currentGameTitle'),
+      currentGameSub: document.getElementById('currentGameSub'),
+      backHubBtn: document.getElementById('backHubBtn'),
+      resetGameBtn: document.getElementById('resetGameBtn'),
+      statGame: document.getElementById('statGame'),
+      statRound: document.getElementById('statRound'),
+      statTimer: document.getElementById('statTimer'),
+      statPlayers: document.getElementById('statPlayers'),
+      gameHero: document.getElementById('gameHero'),
+      gameControls: document.getElementById('gameControls'),
+      resultsList: document.getElementById('resultsList'),
+      leaderboardList: document.getElementById('leaderboardList'),
+      sourceBadge: document.getElementById('sourceBadge'),
+      toastRoot: document.getElementById('toastRoot'),
+      connText: document.getElementById('connText'),
+      sceneCanvas: document.getElementById('sceneCanvas')
+    };
+
+    const app = {
+      peer:null,
+      myId:'',
+      myName: localStorage.getItem('fahmoh_name') || '',
+      roomCode:'',
+      isHost:false,
+      hostConn:null,
+      peers:new Map(),
+      timer:null,
+      scene:null,
+      state:{
+        roomCode:'',
+        hostId:'',
+        currentGame:'',
+        currentGameData:null,
+        players:{},
+        logs:[]
+      }
+    };
+
+    els.playerName.value = app.myName;
+    renderGameCards();
+    render();
+    startScene();
+
+    els.createRoomBtn.onclick = createRoom;
+    els.joinRoomBtn.onclick = joinRoom;
+    els.copyBtn.onclick = async () => { if (!app.roomCode) return toast('No room code yet.','warn'); await navigator.clipboard.writeText(app.roomCode); toast('Copied room code.'); };
+    els.leaveBtn.onclick = leaveRoom;
+    els.backHubBtn.onclick = () => { els.gameScreen.classList.remove('active'); els.hubScreen.classList.add('active'); render(); };
+    els.resetGameBtn.onclick = resetCurrentGame;
+
+    function renderGameCards(){
+      els.gameCards.innerHTML = GAMES.map(g => `
+        <div class="game-card">
+          <div class="emoji">${g.emoji}</div>
+          <div class="title">${g.name}</div>
+          <div class="desc">${g.desc}</div>
+          <div class="meta">${g.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+          <div style="margin-top:14px"><button class="btn btn-pink" onclick="openGame('${g.id}')">Play</button></div>
+        </div>
+      `).join('');
+    }
+
+    function cleanName(v){ return String(v || '').trim().replace(/\s+/g,' ').slice(0,18); }
+    function normalize(v){ return String(v || '').toLowerCase().trim().replace(/[^a-z]/g,''); }
+    function roomCodeFromId(id){ return String(id || '').slice(-6).toUpperCase(); }
+    function getGameMeta(id){ return GAMES.find(g => g.id === id); }
+    function toast(text,tone='good'){
+      const colors = { good:'#4ade80', warn:'#fbbf24', bad:'#f87171' };
+      const el = document.createElement('div');
+      el.className='toast';
+      el.innerHTML = `<div style="font-weight:800;color:${colors[tone] || colors.good};margin-bottom:4px">${tone === 'warn' ? 'Heads up' : tone === 'bad' ? 'Notice' : 'Done'}</div><div>${escapeHtml(text)}</div>`;
+      els.toastRoot.appendChild(el);
+      setTimeout(() => el.remove(), 2600);
+    }
+    function escapeHtml(str){ return String(str).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+    function addLog(text){
+      app.state.logs.unshift({ text, time: Date.now() });
+      app.state.logs = app.state.logs.slice(0, 30);
+    }
+    function saveName(){ app.myName = cleanName(els.playerName.value); localStorage.setItem('fahmoh_name', app.myName); return app.myName; }
+    function makePlayer(name,isHost=false,id=app.myId){ return { id, name, isHost, score:0, xp:0, level:1, streak:0 }; }
+
+    function ensurePeer(){
+      return new Promise((resolve,reject) => {
+        if (app.peer && !app.peer.destroyed) return resolve(app.peer);
+        els.connText.textContent = 'Connecting';
+        app.peer = new Peer();
+        app.peer.on('open', id => {
+          app.myId = id;
+          els.connText.textContent = 'Connected';
+          app.peer.on('connection', handleIncomingConnection);
+          resolve(app.peer);
+        });
+        app.peer.on('error', err => {
+          console.error(err);
+          els.connText.textContent = 'Error';
+          toast('Peer connection failed.','bad');
+          reject(err);
+        });
+      });
+    }
+
+    async function createRoom(){
+      const name = saveName();
+      if (!name) return toast('Type your name first.','warn');
+      await ensurePeer();
+      app.isHost = true;
+      app.peers.clear();
+      app.roomCode = roomCodeFromId(app.myId);
+      app.state = { roomCode:app.roomCode, hostId:app.myId, currentGame:'', currentGameData:null, players:{ [app.myId]: makePlayer(name,true) }, logs:[] };
+      addLog(`${name} created the room.`);
+      broadcastState();
+      render();
+      toast(`Room ${app.roomCode} created.`);
+    }
+
+    async function joinRoom(){
+      const name = saveName();
+      const code = String(els.roomCodeInput.value || '').trim();
+      if (!name) return toast('Type your name first.','warn');
+      if (!code) return toast('Enter a room code.','warn');
+      await ensurePeer();
+      app.isHost = false;
+      const conn = app.peer.connect(code);
+      app.hostConn = conn;
+      conn.on('open', () => {
+        app.roomCode = code.toUpperCase();
+        conn.send({ type:'join-request', player:{ id: app.myId, name } });
+        render();
+      });
+      conn.on('data', data => handleClientMessage(data));
+      conn.on('close', () => { toast('Disconnected from room.','warn'); leaveRoom(false); });
+      conn.on('error', () => toast('Could not join that room.','bad'));
+    }
+
+    function handleIncomingConnection(conn){
+      if (!app.isHost){ conn.close(); return; }
+      conn.on('data', data => handleHostMessage(conn, data));
+      conn.on('close', () => {
+        const entry = [...app.peers.entries()].find(([,c]) => c === conn);
+        if (entry){
+          const [id] = entry;
+          const name = app.state.players[id]?.name || 'Player';
+          app.peers.delete(id);
+          delete app.state.players[id];
+          addLog(`${name} left the room.`);
+          broadcastState();
+          render();
+        }
+      });
+    }
+
+    function handleHostMessage(conn, data){
+      if (!data || typeof data !== 'object') return;
+      if (data.type === 'join-request'){
+        const p = data.player;
+        app.peers.set(p.id, conn);
+        app.state.players[p.id] = makePlayer(p.name,false,p.id);
+        addLog(`${p.name} joined the room.`);
+        sendState(conn);
+        broadcastState();
+        render();
+      }
+      if (data.type === 'action') hostAction(data.action, data.payload, data.playerId);
+    }
+
+    function handleClientMessage(data){
+      if (!data || typeof data !== 'object') return;
+      if (data.type === 'state'){
+        app.state = data.state;
+        app.roomCode = app.state.roomCode || app.roomCode;
+        render();
+        syncGameTimer();
+      }
+    }
+
+    function leaveRoom(showToast=true){
+      clearInterval(app.timer);
+      app.timer = null;
+      if (app.hostConn){ try { app.hostConn.close(); } catch {} }
+      for (const conn of app.peers.values()) try { conn.close(); } catch {}
+      app.peers.clear();
+      app.hostConn = null;
+      app.roomCode = '';
+      app.isHost = false;
+      app.state = { roomCode:'', hostId:'', currentGame:'', currentGameData:null, players:{}, logs:[] };
+      render();
+      if (showToast) toast('You left the room.','warn');
+    }
+
+    function openGame(id){
+      if (!app.roomCode) return toast('Create or join a room first.','warn');
+      if (app.isHost){
+        app.state.currentGame = id;
+        app.state.currentGameData = createInitialGameData(id);
+        resetScores();
+        addLog(`${getGameMeta(id).name} started.`);
+        broadcastState();
+      } else {
+        sendAction('open-game', { id });
+      }
+      els.hubScreen.classList.remove('active');
+      els.gameScreen.classList.add('active');
+      render();
+      syncGameTimer();
+    }
+
+    function resetCurrentGame(){
+      if (!app.isHost || !app.state.currentGame) return;
+      app.state.currentGameData = createInitialGameData(app.state.currentGame);
+      resetScores();
+      addLog(`${getGameMeta(app.state.currentGame).name} reset.`);
+      broadcastState();
+      render();
+      syncGameTimer();
+    }
+
+    function resetScores(){
+      Object.values(app.state.players).forEach(p => { p.score = 0; p.xp = 0; p.level = 1; p.streak = 0; });
+    }
+
+    function createInitialGameData(id){
+      if (id === 'spelling'){
+        const list = buildWordList(8,'mixed');
+        return { status:'lobby', round:0, total:8, words:list, current:'', displayMode:'normal', source:'local', roundEndsAt:0, results:[] };
+      }
+      if (id === 'mcdonalds') return { money:0, orders:[randFood(), randFood()], served:0, feed:[] };
+      if (id === 'axolotl') return { hunger:70, happiness:70, cleanliness:70, feed:[] };
+      if (id === 'rizz') return { prompt: randomRizz(), feed:[] };
+      if (id === 'sigma') return { target:100, feed:[] };
+      if (id === 'military') return { enemyHP:250, playerHP:Object.fromEntries(Object.keys(app.state.players).map(id => [id,100])), log:['Battle started.'] };
+      if (id === 'aura') return { orb:0, feed:[] };
+      return {};
+    }
+
+    function randomRizz(){ return RIZZ_LINES[Math.floor(Math.random()*RIZZ_LINES.length)]; }
+    function randFood(){ return FOODS[Math.floor(Math.random()*FOODS.length)]; }
+    function buildWordList(count,difficulty){
+      let pool = [...WORDS.easy, ...WORDS.medium, ...WORDS.hard];
+      if (difficulty === 'easy') pool = WORDS.easy; else if (difficulty === 'medium') pool = WORDS.medium; else if (difficulty === 'hard') pool = WORDS.hard;
+      return [...new Set(pool)].sort(() => Math.random() - 0.5).slice(0,count);
+    }
+
+    function sendAction(action,payload={}){
+      if (app.isHost) return hostAction(action,payload,app.myId);
+      if (app.hostConn && app.hostConn.open) app.hostConn.send({ type:'action', action, payload, playerId: app.myId });
+    }
+
+    function hostAction(action,payload,playerId){
+      const game = app.state.currentGame;
+      const data = app.state.currentGameData;
+      const player = app.state.players[playerId];
+      if (!player) return;
+
+      if (action === 'open-game' && app.isHost){
+        app.state.currentGame = payload.id;
+        app.state.currentGameData = createInitialGameData(payload.id);
+        resetScores();
+        addLog(`${getGameMeta(payload.id).name} started.`);
+      }
+
+      if (game === 'spelling'){
+        if (action === 'spelling-start'){
+          data.round = 1; data.current = data.words[0]; data.status = 'playing'; data.roundEndsAt = Date.now() + 15000; data.results = [];
+        }
+        if (action === 'spelling-submit' && data.status === 'playing'){
+          if (player._spellRound === data.round) return;
+          const correct = normalize(payload.answer) === normalize(data.current);
+          player._spellRound = data.round;
+          let earned = 0;
+          if (correct){ earned = 100; player.streak += 1; if (player.streak >= 3) earned += 20; player.score += earned; player.xp += 50; }
+          else player.streak = 0;
+          player.level = Math.floor(player.xp / 200) + 1;
+          data.results.unshift({ name: player.name, answer: payload.answer, correct, earned });
+        }
+        if (action === 'spelling-next'){
+          if (data.round >= data.total){ data.status = 'finished'; data.roundEndsAt = 0; }
+          else { data.round += 1; data.current = data.words[data.round - 1]; data.results = []; data.status = 'playing'; data.roundEndsAt = Date.now() + 15000; Object.values(app.state.players).forEach(p => delete p._spellRound); }
+        }
+      }
+
+      if (game === 'mcdonalds'){
+        if (action === 'cook-food'){
+          const want = data.orders[0];
+          if (payload.food === want){ data.money += 10; player.score += 10; player.xp += 10; data.served += 1; data.feed.unshift(`${player.name} served ${want}.`); data.orders.shift(); data.orders.push(randFood()); }
+          else { data.feed.unshift(`${player.name} made ${payload.food} instead of ${want}.`); }
+          player.level = Math.floor(player.xp / 200) + 1;
+        }
+      }
+
+      if (game === 'axolotl'){
+        if (action === 'feed-axo'){ data.hunger = Math.min(100, data.hunger + 12); player.score += 8; player.xp += 8; data.feed.unshift(`${player.name} fed the axolotl.`); }
+        if (action === 'play-axo'){ data.happiness = Math.min(100, data.happiness + 12); player.score += 8; player.xp += 8; data.feed.unshift(`${player.name} played with the axolotl.`); }
+        if (action === 'clean-axo'){ data.cleanliness = Math.min(100, data.cleanliness + 14); player.score += 8; player.xp += 8; data.feed.unshift(`${player.name} cleaned the tank.`); }
+        player.level = Math.floor(player.xp / 200) + 1;
+      }
+
+      if (game === 'rizz'){
+        if (action === 'rizz-pick'){
+          const line = payload.score || 0;
+          player.score += line; player.xp += Math.max(5, Math.floor(line / 2)); player.level = Math.floor(player.xp / 200) + 1;
+          data.feed.unshift(`${player.name} dropped a line for +${line}.`);
+          data.prompt = randomRizz();
+        }
+      }
+
+      if (game === 'sigma'){
+        if (action === 'sigma-train'){ player.score += 8; player.xp += 12; data.feed.unshift(`${player.name} trained discipline.`); }
+        if (action === 'sigma-focus'){ player.score += 12; player.xp += 16; data.feed.unshift(`${player.name} locked in.`); }
+        player.level = Math.floor(player.xp / 200) + 1;
+      }
+
+      if (game === 'military'){
+        if (!data.playerHP[playerId]) data.playerHP[playerId] = 100;
+        if (action === 'mil-attack'){ data.enemyHP = Math.max(0, data.enemyHP - 14); player.score += 14; player.xp += 10; data.log.unshift(`${player.name} attacked for 14.`); }
+        if (action === 'mil-heavy'){ data.enemyHP = Math.max(0, data.enemyHP - 24); player.score += 24; player.xp += 15; data.log.unshift(`${player.name} used heavy attack for 24.`); }
+        if (action === 'mil-defend'){ data.playerHP[playerId] = Math.min(100, data.playerHP[playerId] + 8); data.log.unshift(`${player.name} defended and recovered 8 HP.`); }
+        if (data.enemyHP > 0 && ['mil-attack','mil-heavy','mil-defend'].includes(action)){
+          const dmg = 8;
+          Object.keys(data.playerHP).forEach(id => data.playerHP[id] = Math.max(0, data.playerHP[id] - dmg));
+          data.log.unshift(`Enemy hit everyone for ${dmg}.`);
+        }
+        player.level = Math.floor(player.xp / 200) + 1;
+      }
+
+      if (game === 'aura'){
+        if (action === 'aura-meditate'){ player.score += 8; player.xp += 10; data.orb += 1; data.feed.unshift(`${player.name} meditated.`); }
+        if (action === 'aura-flex'){ player.score += 12; player.xp += 12; data.orb += 2; data.feed.unshift(`${player.name} did an aura flex.`); }
+        if (action === 'aura-absorb' && data.orb > 0){ const gain = data.orb * 5; player.score += gain; player.xp += gain; data.feed.unshift(`${player.name} absorbed ${data.orb} orbs.`); data.orb = 0; }
+        player.level = Math.floor(player.xp / 200) + 1;
+      }
+
+      broadcastState();
+      render();
+      syncGameTimer();
+    }
+
+    function broadcastState(){
+      if (!app.isHost) return;
+      const packet = { type:'state', state: app.state };
+      for (const conn of app.peers.values()) if (conn.open) conn.send(packet);
+    }
+    function sendState(conn){ if (conn && conn.open) conn.send({ type:'state', state: app.state }); }
+
+    function syncGameTimer(){
+      clearInterval(app.timer);
+      app.timer = null;
+      const game = app.state.currentGame;
+      const data = app.state.currentGameData;
+      if (game !== 'spelling' || !data || data.status !== 'playing' || !data.roundEndsAt){ els.statTimer.textContent = '--'; return; }
+      const tick = () => {
+        const left = Math.max(0, data.roundEndsAt - Date.now());
+        els.statTimer.textContent = String(Math.ceil(left / 1000));
+        if (left <= 0){ clearInterval(app.timer); app.timer = null; if (app.isHost) hostAction('spelling-next', {}, app.myId); }
+      };
+      tick();
+      app.timer = setInterval(tick, 200);
+    }
+
+    function render(){
+      els.roomDisplay.textContent = app.roomCode || '------';
+      els.leaveBtn.classList.toggle('hidden', !app.roomCode);
+      renderPlayers();
+      renderLogs();
+      renderGameScreen();
+    }
+
+    function renderPlayers(){
+      const players = Object.values(app.state.players).sort((a,b) => b.score - a.score || a.name.localeCompare(b.name));
+      if (!players.length){ els.playersList.innerHTML = '<div class="muted">Nobody here yet.</div>'; return; }
+      els.playersList.innerHTML = players.map((p,i) => `
+        <div class="item">
+          <div class="left">
+            <div class="rank">${i + 1}</div>
+            <div class="avatar">${escapeHtml((p.name || '?')[0].toUpperCase())}</div>
+            <div>
+              <div class="name">${escapeHtml(p.name)}${p.isHost ? ' <span class="tiny muted">· Host</span>' : ''}</div>
+              <div class="meta-line">Level ${p.level} · XP ${p.xp}</div>
+            </div>
+          </div>
+          <div class="score">${p.score}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderLogs(){
+      const logs = app.state.logs || [];
+      if (!logs.length){ els.logList.innerHTML = '<div class="muted">No activity yet.</div>'; return; }
+      els.logList.innerHTML = logs.map(log => `
+        <div class="item"><div>${escapeHtml(log.text)}</div><div class="meta-line">${new Date(log.time).toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}</div></div>
+      `).join('');
+    }
+
+    function renderGameScreen(){
+      const id = app.state.currentGame;
+      const data = app.state.currentGameData;
+      const meta = getGameMeta(id);
+      els.statPlayers.textContent = String(Object.keys(app.state.players).length);
+      if (!id || !meta){
+        els.statGame.textContent = '-';
+        els.statRound.textContent = '-';
+        els.currentGameTitle.textContent = 'Game';
+        els.currentGameSub.textContent = 'Multiplayer game room';
+        els.gameHero.innerHTML = '<div class="muted">Open a game from the hub.</div>';
+        els.gameControls.innerHTML = '';
+        els.leaderboardList.innerHTML = '<div class="muted">No scores yet.</div>';
+        els.resultsList.innerHTML = '<div class="muted">Nothing yet.</div>';
+        els.resetGameBtn.classList.add('hidden');
+        updateScene('hub');
+        return;
+      }
+      els.currentGameTitle.textContent = meta.name;
+      els.currentGameSub.textContent = meta.desc;
+      els.statGame.textContent = meta.name.split(' ')[0];
+      els.statRound.textContent = id === 'spelling' ? `${data.round || 0}/${data.total || 0}` : statusTextForGame(id,data);
+      els.sourceBadge.textContent = `Source: ${id}`;
+      els.resetGameBtn.classList.toggle('hidden', !app.isHost);
+      updateScene(id);
+      renderLeaderboard();
+      renderResults();
+      renderGameUI();
+    }
+
+    function statusTextForGame(id,data){
+      if (id === 'mcdonalds') return `$${data.money}`;
+      if (id === 'axolotl') return 'Pet Sim';
+      if (id === 'rizz') return 'Charisma';
+      if (id === 'sigma') return `${Math.max(...Object.values(app.state.players).map(p=>p.score),0)}/${data.target}`;
+      if (id === 'military') return `HP ${data.enemyHP}`;
+      if (id === 'aura') return `Orb ${data.orb}`;
+      return '-';
+    }
+
+    function renderLeaderboard(){
+      const players = Object.values(app.state.players).sort((a,b) => b.score - a.score || a.name.localeCompare(b.name));
+      if (!players.length){ els.leaderboardList.innerHTML = '<div class="muted">No scores yet.</div>'; return; }
+      els.leaderboardList.innerHTML = players.map((p,i) => `
+        <div class="item">
+          <div class="left"><div class="rank">${i+1}</div><div><div class="name">${escapeHtml(p.name)}</div><div class="meta-line">Level ${p.level} · Streak ${p.streak}</div></div></div>
+          <div class="score">${p.score}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderResults(){
+      const id = app.state.currentGame;
+      const data = app.state.currentGameData;
+      if (!id || !data){ els.resultsList.innerHTML = '<div class="muted">Nothing yet.</div>'; return; }
+      let rows = [];
+      if (id === 'spelling') rows = data.results || [];
+      if (id === 'mcdonalds' || id === 'axolotl' || id === 'rizz' || id === 'sigma' || id === 'aura') rows = data.feed || [];
+      if (id === 'military') rows = data.log || [];
+      if (!rows.length){ els.resultsList.innerHTML = '<div class="muted">Nothing yet.</div>'; return; }
+      els.resultsList.innerHTML = rows.map(row => typeof row === 'string'
+        ? `<div class="item">${escapeHtml(row)}</div>`
+        : `<div class="item"><div><strong>${escapeHtml(row.name)}</strong></div><div class="meta-line">${escapeHtml(row.answer)} · ${row.correct ? 'Correct' : 'Wrong'} · +${row.earned}</div></div>`
+      ).join('');
+    }
+
+    function renderGameUI(){
+      const id = app.state.currentGame;
+      const data = app.state.currentGameData;
+      if (!id || !data) return;
+      const me = app.state.players[app.myId];
+      if (id === 'spelling'){
+        els.gameHero.innerHTML = `
+          <div class="muted">Spell this word</div>
+          <div class="big">${data.status === 'playing' ? escapeHtml(data.current) : data.status === 'finished' ? 'Finished' : 'Ready?'}</div>
+          <div class="muted">Round ${data.round}/${data.total}</div>
+        `;
+        els.gameControls.innerHTML = `
+          <div class="row wrap">
+            ${app.isHost ? `<button class="btn btn-green" onclick="sendAction('spelling-start')">Start Game</button>` : ''}
+            <button class="btn btn-cyan" onclick="sayWord()">🔊 Say Word</button>
+            ${app.isHost ? `<button class="btn btn-yellow" onclick="sendAction('spelling-next')">Skip / Next</button>` : ''}
+          </div>
+          <input id="spellInput" placeholder="Type the spelling here" />
+          <button class="btn btn-violet" onclick="submitSpelling()">Submit</button>
+        `;
+      }
+      if (id === 'mcdonalds'){
+        els.gameHero.innerHTML = `
+          <div class="muted">Serve the order at the front of the queue</div>
+          <div class="big">${escapeHtml(data.orders[0])}</div>
+          <div class="muted">Money: $${data.money} · Served: ${data.served}</div>
+        `;
+        els.gameControls.innerHTML = `<div class="row wrap">${FOODS.map(f => `<button class="btn btn-green" onclick="sendAction('cook-food',{food:'${f}'})">Make ${f}</button>`).join('')}</div>`;
+      }
+      if (id === 'axolotl'){
+        els.gameHero.innerHTML = `
+          <div class="muted">Keep the axolotl happy</div>
+          <div class="big">🦎</div>
+          <div class="muted">Hunger ${data.hunger} · Happiness ${data.happiness} · Cleanliness ${data.cleanliness}</div>
+        `;
+        els.gameControls.innerHTML = `
+          <div class="row wrap">
+            <button class="btn btn-green" onclick="sendAction('feed-axo')">Feed</button>
+            <button class="btn btn-cyan" onclick="sendAction('play-axo')">Play</button>
+            <button class="btn btn-yellow" onclick="sendAction('clean-axo')">Clean Tank</button>
+          </div>`;
+      }
+      if (id === 'rizz'){
+        els.gameHero.innerHTML = `
+          <div class="muted">Pick a line</div>
+          <div class="big" style="font-size:30px">${escapeHtml(data.prompt.text)}</div>
+          <div class="muted">Current charisma target: highest score wins</div>
+        `;
+        els.gameControls.innerHTML = `
+          <div class="row wrap">
+            ${RIZZ_LINES.map(r => `<button class="btn btn-pink" onclick="sendAction('rizz-pick',{score:${r.score}})">${escapeHtml(r.text.slice(0, 24))}...</button>`).join('')}
+          </div>`;
+      }
+      if (id === 'sigma'){
+        els.gameHero.innerHTML = `
+          <div class="muted">First player to ${data.target} wins the grind</div>
+          <div class="big">🗿</div>
+          <div class="muted">Train harder than everyone else</div>
+        `;
+        els.gameControls.innerHTML = `
+          <div class="row wrap">
+            <button class="btn btn-green" onclick="sendAction('sigma-train')">Train Discipline</button>
+            <button class="btn btn-violet" onclick="sendAction('sigma-focus')">Lock In</button>
+          </div>`;
+      }
+      if (id === 'military'){
+        const hp = data.playerHP[app.myId] ?? 100;
+        els.gameHero.innerHTML = `
+          <div class="muted">Take down the shared enemy</div>
+          <div class="big">Enemy HP ${data.enemyHP}</div>
+          <div class="muted">Your HP ${hp}</div>
+        `;
+        els.gameControls.innerHTML = `
+          <div class="row wrap">
+            <button class="btn btn-green" onclick="sendAction('mil-attack')">Attack</button>
+            <button class="btn btn-red" onclick="sendAction('mil-heavy')">Heavy Attack</button>
+            <button class="btn btn-cyan" onclick="sendAction('mil-defend')">Defend</button>
+          </div>`;
+      }
+      if (id === 'aura'){
+        els.gameHero.innerHTML = `
+          <div class="muted">Build the most aura</div>
+          <div class="big">✨ ${data.orb} Orbs</div>
+          <div class="muted">Meditate, flex, then absorb</div>
+        `;
+        els.gameControls.innerHTML = `
+          <div class="row wrap">
+            <button class="btn btn-green" onclick="sendAction('aura-meditate')">Meditate</button>
+            <button class="btn btn-pink" onclick="sendAction('aura-flex')">Aura Flex</button>
+            <button class="btn btn-yellow" onclick="sendAction('aura-absorb')">Absorb Orbs</button>
+          </div>`;
+      }
+    }
+
+    function submitSpelling(){
+      const input = document.getElementById('spellInput');
+      if (!input || !input.value.trim()) return toast('Type an answer first.','warn');
+      sendAction('spelling-submit',{ answer: input.value.trim() });
+      input.value = '';
+    }
+    function sayWord(){
+      const data = app.state.currentGameData;
+      if (!data?.current) return;
+      if (!('speechSynthesis' in window)) return toast('Speech is not supported here.','warn');
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(data.current);
+      u.lang = 'en-GB';
+      u.rate = .9;
+      speechSynthesis.speak(u);
+    }
+
+    function startScene(){
+      const canvas = els.sceneCanvas;
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, canvas.clientWidth / canvas.clientHeight, .1, 100);
+      camera.position.set(0, 1.2, 4.6);
+      const ambient = new THREE.AmbientLight(0xffffff, 1.4); scene.add(ambient);
+      const dir = new THREE.DirectionalLight(0xffffff, 1.2); dir.position.set(3,4,3); scene.add(dir);
+      const group = new THREE.Group(); scene.add(group);
+      const floor = new THREE.Mesh(new THREE.CircleGeometry(2.2, 32), new THREE.MeshStandardMaterial({ color:0x152033, metalness:.1, roughness:.8 }));
+      floor.rotation.x = -Math.PI/2; floor.position.y = -.9; scene.add(floor);
+      app.scene = { renderer, scene, camera, group };
+      function loop(){
+        requestAnimationFrame(loop);
+        group.rotation.y += .01;
+        renderer.render(scene, camera);
+      }
+      loop();
+      updateScene('hub');
+      window.addEventListener('resize', () => {
+        renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+      });
+    }
+
+    function updateScene(mode){
+      if (!app.scene) return;
+      const { group } = app.scene;
+      while (group.children.length) group.remove(group.children[0]);
+      const mat1 = new THREE.MeshStandardMaterial({ color:0x22d3ee, metalness:.25, roughness:.45 });
+      const mat2 = new THREE.MeshStandardMaterial({ color:0x8b5cf6, metalness:.25, roughness:.45 });
+      const mat3 = new THREE.MeshStandardMaterial({ color:0xec4899, metalness:.25, roughness:.45 });
+      if (mode === 'military'){
+        const body = new THREE.Mesh(new THREE.BoxGeometry(1,1.2,1), mat2); group.add(body);
+        const blade = new THREE.Mesh(new THREE.BoxGeometry(.15,1.4,.15), mat1); blade.position.set(1,0,0); group.add(blade);
+      } else if (mode === 'aura'){
+        for (let i=0;i<6;i++){ const orb = new THREE.Mesh(new THREE.SphereGeometry(.28,24,24), i%2?mat1:mat3); orb.position.set(Math.cos(i)*1.2, Math.sin(i)*.5, Math.sin(i)*1.2); group.add(orb); }
+      } else if (mode === 'axolotl'){
+        const body = new THREE.Mesh(new THREE.BoxGeometry(1.5,.55,.7), mat1); group.add(body);
+        const tail = new THREE.Mesh(new THREE.BoxGeometry(.45,.4,.12), mat3); tail.position.set(-1.05,0,0); group.add(tail);
+      } else if (mode === 'mcdonalds'){
+        const bun1 = new THREE.Mesh(new THREE.CylinderGeometry(.85,.85,.28,32), new THREE.MeshStandardMaterial({ color:0xd97706 })); bun1.position.y=.45; group.add(bun1);
+        const patty = new THREE.Mesh(new THREE.CylinderGeometry(.78,.78,.18,32), new THREE.MeshStandardMaterial({ color:0x5b3716 })); patty.position.y=.08; group.add(patty);
+        const bun2 = new THREE.Mesh(new THREE.CylinderGeometry(.85,.85,.28,32), new THREE.MeshStandardMaterial({ color:0xf59e0b })); bun2.position.y=-.25; group.add(bun2);
+      } else if (mode === 'spelling'){
+        const box = new THREE.Mesh(new THREE.BoxGeometry(1.6,1,1), mat1); group.add(box);
+      } else if (mode === 'rizz'){
+        const heart = new THREE.Mesh(new THREE.SphereGeometry(.75,24,24), mat3); heart.scale.set(1,.85,.6); group.add(heart);
+      } else if (mode === 'sigma'){
+        const head = new THREE.Mesh(new THREE.BoxGeometry(1.15,1.15,1.15), mat2); group.add(head);
+      } else {
+        const cube = new THREE.Mesh(new THREE.BoxGeometry(1.2,1.2,1.2), mat1); group.add(cube);
+      }
+    }
+  </script>
+</body>
+</html>

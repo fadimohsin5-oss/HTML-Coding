@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The Spooky Story</title>
+</head>
+<body>
+<h1>
+The Basement
+</h1>
+<p id="story">
+I wanted to find my friend, and he was hiding in the basement.
+</p>
+<button onclick="goDark()">Get in the Mood</button>
+<div class="textEntry">Type your name here, if you dare: <input type="text" id="name"> </div>
+<button onclick="typeAndScream()">Please, Please don't click me!</button>
+<button onclick="finishTheStory()">Tell me what happened!</button>
+<audio id="audio" src="C:\Users\fadim\Downloads\creepy.mp3" type="audio/mpeg" ></audio>
+
+<script>
+  function typeAndScream() {
+  document.getElementById("audio").play();
+  var personName = document.getElementById("name").value;
+  alert("I told you not to do that" + personName)
+  }
+  function goDark() {
+    document.body.className = "dark";
+  }
+  function finishTheStory(){
+    document.getElementById("story").innerHTML = "So i carefully searched trhe damnp dungeon. There you are!"
+  }
+</script>
+</body>
+</html>
