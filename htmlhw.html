@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Portfolio Project</title>
+
+<!-- Bootstrap CDN -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+body{
+    background:#e6e6e6;
+    font-family: Arial, Helvetica, sans-serif;
+    padding:40px;
+}
+
+/* ribbon title */
+.ribbon{
+    position: relative;
+    background:#ef7a6a;
+    color:white;
+    display:inline-block;
+    padding:10px 30px;
+    font-weight:bold;
+    font-size:22px;
+    margin:30px 0;
+}
+
+.ribbon::after{
+    content:"";
+    position:absolute;
+    right:-20px;
+    top:0;
+    border-top:25px solid transparent;
+    border-bottom:25px solid transparent;
+    border-left:20px solid #ef7a6a;
+}
+
+.section-box{
+    margin-bottom:40px;
+}
+
+.content{
+    margin-top:20px;
+    line-height:1.7;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- Goal -->
+<div class="section-box">
+<p><b>Goal of the project:</b> To know about how to create a portfolio using HTML and CSS, Bootstrap.</p>
+</div>
+
+
+<!-- Story -->
+<div class="section-box">
+
+<div class="ribbon">Story</div>
+
+<div class="content">
+<h5><b>Story of the project:</b></h5>
+
+<p>
+The Scrollspy plugin is used to automatically update links in a navigation list
+based on scroll position. There was a boy named Sam. He wants to develop his own
+portfolio website. Now you need to help Sam to create the portfolio website for himself.
+</p>
+
+</div>
+
+</div>
+
+
+<!-- Getting Started -->
+<div class="section-box">
+
+<div class="ribbon">Getting started</div>
+
+<div class="content">
+
+<h5><b>Getting started</b></h5>
+
+<ol>
+<li>HTML &lt;body&gt; tag defines the main content of an HTML document which displays on the browser. It can contain text content, lists, paragraphs, headings, images, tables, links, videos, etc.</li>
+
+<li>You need to complete this activity in the same way we did this in the classroom.</li>
+
+<li>Create some grid properties using bootstrap and it's predefined library.</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>

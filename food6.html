@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>Indian Cuisines</title>
+
+<style>
+
+body{
+font-family: Arial;
+margin:0;
+background:#f4f4f4;
+}
+
+.container{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:20px;
+padding:20px;
+}
+
+/* HEADER */
+header{
+grid-column:1/6;
+text-align:center;
+font-size:28px;
+font-weight:bold;
+}
+
+/* NAVBAR */
+nav{
+grid-column:1/6;
+background:#e7d7a5;
+padding:10px;
+}
+
+nav ul{
+display:flex;
+justify-content:space-around;
+list-style:none;
+padding:0;
+margin:0;
+}
+
+/* MAIN CONTENT */
+main{
+grid-column:1/5;
+}
+
+.food{
+background:#eee6f3;
+padding:15px;
+margin-bottom:15px;
+border-radius:8px;
+display:flex;
+gap:15px;
+}
+
+.food img{
+width:120px;
+height:90px;
+object-fit:cover;
+border-radius:5px;
+}
+
+/* SIDEBAR */
+aside{
+grid-column:5/6;
+background:#e4dbea;
+padding:15px;
+border-radius:8px;
+}
+
+aside h2{
+background:#f3c95a;
+padding:5px;
+text-align:center;
+}
+
+aside h3{
+background:#6fa6a6;
+color:white;
+padding:4px;
+}
+
+/* FOOTER */
+footer{
+grid-column:1/6;
+background:#1e2335;
+color:white;
+padding:20px;
+display:flex;
+justify-content:space-between;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+<h1>Indian Cuisines</h1>
+</header>
+
+<nav>
+<ul>
+<li>Bengali</li>
+<li>Gujarati</li>
+<li>Mughlai</li>
+<li>Punjabi</li>
+<li>South Indian</li>
+</ul>
+</nav>
+
+<main>
+
+<section class="food">
+<h2>Bengali Food</h2>
+<p>Bengali cuisine is known for fish, rice and aromatic spices.</p>
+</section>
+
+<section class="food">
+<h2>Gujarati Food</h2>
+<p>Gujarati cuisine is mostly vegetarian and famous for sweet and spicy flavors.</p>
+</section>
+
+<section class="food">
+<h2>Mughlai Food</h2>
+<p>Mughlai cuisine includes rich dishes like biryani and kebabs.</p>
+</section>
+
+<section class="food">
+<h2>Punjabi Food</h2>
+<p>Punjabi cuisine is famous for butter chicken, naan and tandoori dishes.</p>
+</section>
+
+<section class="food">
+<h2>South Indian Cuisine</h2>
+<p>South Indian cuisine includes dosa, idli and sambar.</p>
+</section>
+
+</main>
+
+<aside>
+
+<h2>Popular Foods</h2>
+
+<div>
+<h3>North Indian</h3>
+<ul>
+<li>Chole Bhature</li>
+<li>Samosa</li>
+<li>Jalebi</li>
+<li>Dahi Bhalla</li>
+</ul>
+</div>
+
+<div>
+<h3>South Indian</h3>
+<ul>
+<li>Idli</li>
+<li>Masala Dosa</li>
+<li>Pongal</li>
+<li>Bisi Bele Bath</li>
+</ul>
+</div>
+
+<div>
+<h3>Mughlai</h3>
+<ul>
+<li>Chicken Biryani</li>
+<li>Butter Chicken</li>
+<li>Rogan Josh</li>
+</ul>
+</div>
+
+</aside>
+
+<footer>
+<p>Published By: Fahad.M</p>
+<p>Date: 25/04/2021</p>
+</footer>
+
+</div>
+
+</body>
+</html>
