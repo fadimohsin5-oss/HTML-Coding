@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Contact Us - Fah's Restaurant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="topnav">
+    <a href="index.html">Home</a>
+    <a href="index.html#about">About Us</a>
+    <a href="index.html#gallery">Gallery</a>
+    <a href="index.html#services">Services</a>
+    <a href="contact.html">Contact Us</a>
+</nav>
+
+<section class="contact-section">
+    <div class="contact-box">
+        <h1>Contact Us</h1>
+        <p>We would love to hear from you!</p>
+
+        <p>Email: therealfah's@abc.com</p>
+
+        <form onsubmit="alert('Thank you! This is a demo form.'); return false;">
+            <fieldset>
+                <legend>Send Us a Message</legend>
+
+                <label for="name">Your Name:</label>
+                <input type="text" id="name" required>
+
+                <label for="age">Your Age:</label>
+                <input type="number" id="age" min="1">
+
+                <label for="email">Your Email:</label>
+                <input type="email" id="email" required>
+
+                <label for="message">Message:</label>
+                <textarea id="message" rows="5"
+                          required></textarea>
+
+                <button type="submit">Submit</button>
+            </fieldset>
+        </form>
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 Fah's Restaurant</p>
+</footer>
+
+</body>
+</html>
